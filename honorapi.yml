@@ -1,0 +1,575 @@
+openapi: 3.0.3
+info:
+  title: Honor Education API
+  description: |-
+    
+    Create users, courses, and enrollments.  This is largely based on the [OneRoster Implementation](https://www.imsglobal.org/oneroster-v11-final-specification) with a few exceptions:
+    
+    * OneRoster REST bindings for rostering are read-only but these allow creation of entities
+    * In OneRoster, you enroll in a `class` but we do not expose that abstraction directly.  In this API, you specify the `course` sourced ID when creating 
+    an enrollment.
+    
+    ### Authentication Information
+    
+    Lorem Ipsum
+
+  contact:
+    name: Support
+    email: support@honor.education
+  version: '0.1'
+servers:
+  - url: https://api.honor.education/1
+tags:
+  - name: Courses
+    description: Course creation and retrieval
+  - name: Enrollment
+    description: Enrollment related stuff
+  - name: Users
+    description: User creation and retrieval
+paths:
+  /courses:
+    get:
+      tags:
+        - Courses
+      summary: Get the courses for an organization
+      operationId: getAllCourses
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+          allowEmptyValue: false
+          style: form
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          allowEmptyValue: false
+          style: form
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            X-Total-Count:
+              description: "The total number of items returned the in the query (not just limited to current page)"
+              example: 138
+            Link:
+              description: |-
+                The prev, next, last, first links.   For example: `<https://api.honor.education/1/courses?limit=10>; rel="first", <https://api.honor.education/1/courses?limit=10;offset=40>; rel="next",  <https://api.honor.education/1/courses?limit=10&offset=20>; rel="prev", <https://api.honor.education/1/courses?limit=10&offset=120>; rel="last",`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoursesEnvelope'
+    post:
+      tags:
+        - Courses
+      summary: Create a course
+      description: Creates a course
+      operationId: createCourse
+      requestBody:
+        description: |-
+          Creates a course.  If you do not specify a `sourcedId` one will be created for you.  The sourcedId must be unique within your organization.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnvelope'
+        '400':
+          description: Invalid parameter specified
+        '422':
+          description: Validation exception
+      security:
+        - oneroster_auth:
+            - api:readwrite
+  /courses/{sourcedId}:
+    delete:
+      tags:
+        - Courses
+      summary: removes a course
+      description: Removes a course
+      operationId: deleteCourse
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the course
+          required: true
+      responses:
+        '204':
+          description: Successful
+    get:
+      tags:
+        - Courses
+      summary: Get the course by sourced ID
+      description: Get the course by sourced ID
+      operationId: getCourse
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the course
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+    patch:
+      tags:
+        - Courses
+      summary: Update a course
+      description: Update a course by sourcedId
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the course
+          required: true
+      requestBody:
+        description: Update subset of course's attributes
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchableCourse'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+  /enrollments:
+    get:
+      tags:
+        - Enrollment
+      summary: Gets all the enrollments for the organization
+      description: Gets all the enrollments for the organization
+      operationId: getAllEnrollments
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+          allowEmptyValue: false
+          style: form
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          allowEmptyValue: false
+          style: form
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            X-Total-Count:
+              description: "The total number of items returned the in the query (not just limited to current page)"
+              example: 138
+            Link:
+              description: |-
+                The prev, next, last, first links.   For example: `<https://api.honor.education/1/users?limit=10>; rel="first", <https://api.honor.education/1/users?limit=10;offset=40>; rel="next",  <https://api.honor.education/1/enrollments?limit=10&offset=20>; rel="prev", <https://api.honor.education/1/enrollments?limit=10&offset=120>; rel="last",`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentsEnvelope'
+    post:
+      tags:
+        - Enrollment
+      summary: Creates a new enrollment
+      description: Creates a new enrollment
+      operationId: createEnrollment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enrollment'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentEnvelope'
+        '400':
+          description: Invalid parameter specified
+        '422':
+          description: Validation exception
+      security:
+        - oneroster_auth:
+            - api:readwrite
+  /enrollments/{sourcedId}:
+    delete:
+      tags:
+        - Enrollment
+      summary: removes an enrollment
+      description: Removes an enrollment
+      operationId: deleteEnrollment
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the enrollment
+          required: true
+      responses:
+        '204':
+          description: Successful
+      security:
+        - oneroster_auth:
+            - api:readwrite
+    get:
+      tags:
+        - Enrollment
+      summary: Get an enrollment
+      description: Retrieves a enrollment by sourcedId
+      operationId: findEnrollment
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the enrollment
+          required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get the users for an organization
+      description: Lists the users for an organization or a filtered subset
+      operationId: getAllUsers
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+          allowEmptyValue: false
+          style: form
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          allowEmptyValue: false
+          style: form
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            X-Total-Count:
+              description: "The total number of items returned the in the query (not just limited to current page)"
+              example: 138
+            Link:
+              description: |-
+                The prev, next, last, first links.   For example: `<https://api.honor.education/1/users?limit=10>; rel="first", <https://api.honor.education/1/users?limit=10;offset=40>; rel="next",  <https://api.honor.education/1/users?limit=10&offset=20>; rel="prev", <https://api.honor.education/1/users?limit=10&offset=120>; rel="last",`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersEnvelope'
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Creates a new user in honor's system.  If `sourcedId` is unspecified, one will be generated.
+      operationId: createUser
+      requestBody:
+        description: Create an existing user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEnvelope'
+        '400':
+          description: Invalid parameter specified
+        '422':
+          description: Validation exception
+      security:
+        - oneroster_auth:
+            - api:readwrite
+  /users/{sourcedId}:
+    get:
+      tags:
+        - Users
+      summary: Get a user
+      description: Retrieves a user by sourcedId
+      operationId: findUser
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the user
+          required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+    patch:
+      tags:
+        - Users
+      summary: Update a user
+      description: Update a user by sourcedId
+      operationId: patchUser
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the user
+          required: true
+      requestBody:
+        description: Update subset of user's attributes
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchableUser'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+
+
+components:
+  schemas:
+    Course:
+      allOf:
+        - $ref: '#/components/schemas/OneRosterResource'
+        - $ref: '#/components/schemas/PatchableCourse'
+    CourseEnvelope:
+      required:
+        - courses
+      type: object
+      properties:
+        course:
+          $ref: "#/components/schemas/Course"
+    CoursesEnvelope:
+      required:
+        - courses
+      type: object
+      properties:
+        courses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+    EnrollmentEnvelope:
+      required:
+        - enrollment
+      type: object
+      properties:
+        enrollment:
+          $ref: "#/components/schemas/Enrollment"
+    EnrollmentsEnvelope:
+      required:
+        - enrollments
+      type: object
+      properties:
+        enrollments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Enrollment"
+    Enrollment:
+      allOf:
+        - $ref: '#/components/schemas/OneRosterResource'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/OneRosterResource'
+            class:
+              $ref: '#/components/schemas/OneRosterResource'
+            role:
+              $ref: '#/components/schemas/Role'
+    IdRef:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "HonorId"
+        identifier:
+          type: string
+          example: "3738aff4-6fb6-42a1-ae70-bed16b713fc6"
+      readOnly: true
+    OneRosterMetadataDType:
+      type: object
+      properties: {}
+      additionalProperties: true
+      example:
+        foo: bar
+      readOnly: true
+    OneRosterResource:
+      type: object
+      properties:
+        sourcedId:
+          type: string
+          description: the external object identifier
+          example: "b18c1010-4065-4a5a-891b-6162137c7929"
+        status:
+          type: string
+          enum:
+            - active
+            - tobedeleted
+          readOnly: true
+          example: "active"
+        dateLastModified:
+          type: string
+          format: date-time
+          readOnly: true
+        metadata:
+          $ref: "#/components/schemas/OneRosterMetadataDType"
+    PatchableCourse:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Introduction to Biology
+          nullable: false
+          required: true
+        courseCode:
+          type: string
+          example: BIO-101
+          nullable: true
+          required: false
+        description:
+          type: string
+          example: A survey of basic biology from the cellular level to plant and animal biology
+          required: false
+        notes:
+          type: string
+          example: Some course notes
+    PatchableUser:
+      type: object
+      properties:
+        enabledUser:
+          type: boolean
+        givenName:
+          type: string
+          example: "Sally"
+        middleName:
+          type: string
+          required: false
+          nullable: true
+          example: null
+        familyName:
+          type: string
+          example: "Smith"
+        email:
+          type: string
+          example: "sallysmith@example.com"
+        sms:
+          type: string
+        defaultRole:
+          type: string
+          enum:
+            - student
+            - teacher
+    Role:
+      type: string
+      enum:
+        - student
+        - teacher
+        - proctor
+        - administrator
+    User:
+      allOf:
+        - $ref: '#/components/schemas/OneRosterResource'
+        - $ref: "#/components/schemas/PatchableUser"
+        - type: object
+          properties:
+            userIds:
+              readOnly: true
+              type: array
+              items:
+                $ref: "#/components/schemas/IdRef"
+    UserEnvelope:
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    UsersEnvelope:
+      required:
+        - users
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+  securitySchemes:
+    oneroster_auth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            api:readwrite: allow read/write access to apis
+            authorizationUrl: https://not-specified-yet
