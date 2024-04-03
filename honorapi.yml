@@ -11,7 +11,36 @@ info:
     
     ### Authentication Information
     
-    Lorem Ipsum
+    Contact support and obtain a client-id and client-secret.  Once you have a client ID and client secret, you will be able to request an
+    access token and refresh token which will allow you to make requests
+
+    ```
+    curl -H 'Content-Type: application/json' -X POST -d @- https://auth.honor.education/oauth2/token
+
+    {
+        "grant_type": "client_credentials",
+        "client_id": "2tpuuj6vs4el7j73sgol6h6dg1",
+        "client_secret": "10lmo4e4j5t027903gcbj10fe5bd36t1snn6dcqaip1bnl6bj3p",
+        "scope": "https://api.honor.education/api.oneroster"
+    }
+    ```    
+
+    Returns
+
+    ```
+    {
+      "access_token":"eyJraWQiOiJYZTFmTzhCS1F5aGxrZmxaUXBcL3dQMXZ4blBy",
+      "expires_in":3600,
+      "token_type":"Bearer"
+    }
+
+    ```
+
+    Once you have an access token you will be able to make requests to the API.  For example,
+
+    ```
+    curl http://api.honor.education/1/courses -H 'Authorization: Bearer eyJraWQiOiJYZTFmTzhCS1F5aGxrZmxaUXBcL3dQMXZ4blBy'
+    ```
 
   contact:
     name: Support
