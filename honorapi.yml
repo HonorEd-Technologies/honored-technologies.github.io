@@ -46,7 +46,7 @@ tags:
   - name: Courses
     description: Course creation and retrieval
   - name: Enrollment
-    description: Enrollment related stuff
+    description: Enrollment
   - name: Users
     description: User creation and retrieval
 paths:
