@@ -15,14 +15,8 @@ info:
     access token and refresh token which will allow you to make requests
 
     ```
-    curl -H 'Content-Type: application/json' -X POST -d @- https://auth.honor.education/oauth2/token
-
-    {
-        "grant_type": "client_credentials",
-        "client_id": "2tpuuj6vs4el7j73sgol6h6dg1",
-        "client_secret": "10lmo4e4j5t027903gcbj10fe5bd36t1snn6dcqaip1bnl6bj3p",
-        "scope": "https://api.honor.education/api.oneroster"
-    }
+    curl -H 'Content-Type: application/json' -X POST -d 'client_id=THE_CLIENT_ID&client_secret=THE_CLIENT_SECRET&scope=https://api-dev.devhonor.education/api.oneroster&grant_type=client_credentials' https://auth.honor.education/oauth2/token
+    
     ```    
 
     Returns
