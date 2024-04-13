@@ -1,3 +1,4 @@
+#file: noinspection SpellCheckingInspection
 openapi: 3.0.3
 info:
   title: Honor Education API
@@ -157,7 +158,7 @@ paths:
       security:
         - oneroster_auth:
             - api:readwrite
-    patch:
+    put:
       tags:
         - Courses
       summary: Update a course
@@ -168,11 +169,11 @@ paths:
           description: The sourced ID of the course
           required: true
       requestBody:
-        description: Update subset of course's attributes
+        description: A course
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchableCourse'
+              $ref: '#/components/schemas/Course'
         required: true
       responses:
         '200':
@@ -390,7 +391,7 @@ paths:
       security:
         - oneroster_auth:
             - api:readwrite
-    patch:
+    put:
       tags:
         - Users
       summary: Update a user
@@ -402,11 +403,11 @@ paths:
           description: The sourced ID of the user
           required: true
       requestBody:
-        description: Update subset of user's attributes
+        description: A user
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchableUser'
+              $ref: '#/components/schemas/User'
         required: true
       responses:
         '200':
@@ -515,16 +516,13 @@ components:
           type: string
           example: Introduction to Biology
           nullable: false
-          required: true
         courseCode:
           type: string
           example: BIO-101
           nullable: true
-          required: false
         description:
           type: string
           example: A survey of basic biology from the cellular level to plant and animal biology
-          required: false
         notes:
           type: string
           example: Some course notes
@@ -538,7 +536,6 @@ components:
           example: "Sally"
         middleName:
           type: string
-          required: false
           nullable: true
           example: null
         familyName:
