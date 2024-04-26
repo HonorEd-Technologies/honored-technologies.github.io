@@ -45,7 +45,7 @@ servers:
   - url: https://api.honor.education/1
 tags:
   - name: Academic Sessions
-    description: Academic session creation and retrieval (available since release 2024.08)
+    description: Academic session creation and retrieval
   - name: Courses
     description: Course creation and retrieval
   - name: Enrollment
@@ -54,6 +54,46 @@ tags:
     description: User creation and retrieval
 paths:
   /academic-sessions:
+    get:
+      tags:
+        - Academic Sessions
+      summary: Get academic sessions for an organization
+      operationId: getAllAcademicSessions
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+          allowEmptyValue: false
+          style: form
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          allowEmptyValue: false
+          style: form
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            X-Total-Count:
+              description: "The total number of items returned the in the query (not just limited to current page)"
+              example: 138
+            Link:
+              description: |-
+                The prev, next, last, first links.   For example: `<https://api.honor.education/1/academic-sessions?limit=10>; rel="first", <https://api.honor.education/1/academic-sessions?limit=10;offset=40>; rel="next",  <https://api.honor.education/1/academic-sessions?limit=10&offset=20>; rel="prev", <https://api.honor.education/1/academic-sessions?limit=10&offset=120>; rel="last",`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcademicSessionsEnvelope'
     post:
       tags:
         - Academic Sessions
@@ -105,6 +145,50 @@ paths:
       security:
         - oneroster_auth:
             - api:readwrite
+    put:
+      tags:
+        - Academic Sessions
+      summary: Update an academic session
+      description: Update an academic session
+      operationId: putAcademicSession
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the academic session
+          required: true
+      requestBody:
+        description: An academic session
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcademicSession'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcademicSessionEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
+    delete:
+      tags:
+        - Academic Sessions
+      summary: Delete an academic session
+      description: Delete an academic session
+      operationId: deleteAcademicSession
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the academic session
+          required: true
+      responses:
+        '204':
+          description: Successful
   /courses:
     get:
       tags:
