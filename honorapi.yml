@@ -44,6 +44,8 @@ info:
 servers:
   - url: https://api.honor.education/1
 tags:
+  - name: Academic Sessions
+    description: Academic session creation and retrieval (available since release 2024.08)
   - name: Courses
     description: Course creation and retrieval
   - name: Enrollment
@@ -51,6 +53,58 @@ tags:
   - name: Users
     description: User creation and retrieval
 paths:
+  /academic-sessions:
+    post:
+      tags:
+        - Academic Sessions
+      summary: Create a new academic session
+      description: Create a new academic session
+      operationId: createAcademicSession
+      requestBody:
+        description: Create a new academic session
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcademicSession'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcademicSessionEnvelope'
+        '400':
+          description: Invalid parameter specified
+        '422':
+          description: Validation exception
+      security:
+        - oneroster_auth:
+            - api:readwrite
+  /academic-sessions/{sourcedId}:
+    get:
+      tags:
+        - Academic Sessions
+      summary: Get academic session by sourced ID
+      description: Get academic session by sourced ID
+      operationId: getAcademicSession
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the academic session
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcademicSessionEnvelope'
+        '404':
+          description: Not Found
+      security:
+        - oneroster_auth:
+            - api:readwrite
   /courses:
     get:
       tags:
@@ -422,9 +476,54 @@ paths:
         - oneroster_auth:
             - api:readwrite
 
-
 components:
   schemas:
+    AcademicSessionEnvelope:
+      required:
+        - academicSession
+      type: object
+      properties:
+        academicSession:
+          $ref: '#/components/schemas/AcademicSession'
+    AcademicSessionsEnvelope:
+      required:
+        - academicSessions
+      type: object
+      properties:
+        academicSessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AcademicSession"
+    AcademicSession:
+      allOf:
+        - $ref: '#/components/schemas/OneRosterResource'
+        - type: object
+          properties:
+            title:
+              type: string
+              example: Spring 2024
+              nullable: false
+            startDate:
+              type: string
+              format: date
+              nullable: true
+            endDate:
+              type: string
+              format: date
+              nullable: true
+            schoolYear:
+              type: string
+              example: AY 2024-2025
+              nullable: true
+            type:
+              type: string
+              enum:
+                - gradingPeriod
+                - schoolYear
+                - semester
+                - term
+              example: semester
+              nullable: true
     Course:
       allOf:
         - $ref: '#/components/schemas/OneRosterResource'
