@@ -45,7 +45,7 @@ servers:
   - url: https://api.honor.education/1
 tags:
   - name: Academic Sessions
-    description: Academic session creation and retrieval (available since release 2024.08)
+    description: Academic session creation and retrieval
   - name: Courses
     description: Course creation and retrieval
   - name: Enrollment
