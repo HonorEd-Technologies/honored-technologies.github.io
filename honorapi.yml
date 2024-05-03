@@ -729,6 +729,15 @@ components:
           example: "sallysmith@example.com"
         sms:
           type: string
+        authProviderType:
+          type: string
+          example: null
+          enum:
+            - google
+            - saml
+            - password
+          nullable: true
+          description: "Will default to tenant default if left unspecified"
         defaultRole:
           type: string
           enum:
