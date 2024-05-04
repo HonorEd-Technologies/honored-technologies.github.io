@@ -4,11 +4,7 @@ info:
   title: Honor Education API
   description: |-
     
-    Create users, courses, and enrollments.  This is largely based on the [OneRoster Implementation](https://www.imsglobal.org/oneroster-v11-final-specification) with a few exceptions:
-    
-    * OneRoster REST bindings for rostering are read-only but these allow creation of entities
-    * In OneRoster, you enroll in a `class` but we do not expose that abstraction directly.  In this API, you specify the `course` sourced ID when creating 
-    an enrollment.
+    Create users, courses, and enrollments.  This is largely based on the [OneRoster Implementation](https://www.imsglobal.org/oneroster-v11-final-specification).
     
     ### Authentication Information
     
