@@ -430,7 +430,6 @@ paths:
       security:
         - oneroster_auth:
             - api:readwrite
-
   /users:
     get:
       tags:
@@ -501,6 +500,20 @@ paths:
         - oneroster_auth:
             - api:readwrite
   /users/{sourcedId}:
+    delete:
+      tags:
+        - Users
+      summary: Remove a user
+      description: Removes a user by sourcedId
+      operationId: deleteUser
+      parameters:
+        - name: sourcedId
+          in: path
+          description: The sourced ID of the user
+          required: true
+      responses:
+        '204':
+          description: Successful
     get:
       tags:
         - Users
