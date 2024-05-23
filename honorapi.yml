@@ -234,7 +234,7 @@ paths:
       operationId: createCourse
       requestBody:
         description: |-
-          Creates a course.  If you do not specify a `sourcedId` one will be created for you.  The sourcedId must be unique within your organization.
+          Creates a course. The sourcedId must be unique within your organization.
         content:
           application/json:
             schema:
@@ -476,7 +476,7 @@ paths:
       tags:
         - Users
       summary: Create a new user
-      description: Creates a new user in honor's system.  If `sourcedId` is unspecified, one will be generated.
+      description: Creates a new user in honor's system.
       operationId: createUser
       requestBody:
         description: Create an existing user
