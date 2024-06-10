@@ -367,7 +367,10 @@ paths:
       tags:
         - Enrollment
       summary: Creates a new enrollment
-      description: Creates a new enrollment
+      description: Creates a new enrollment. Because we do not yet expose an API for class and section, the 
+        `class/sourcedId` field in the body can be any of these (evaluated in this order) - section Id, 
+        section sourced Id,  class Id, class sourced Id, course sourced ID, course ID.  When section Ids are not 
+        specified, the default section is selected for that class or course.
       operationId: createEnrollment
       requestBody:
         content:
