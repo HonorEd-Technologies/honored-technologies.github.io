@@ -691,6 +691,12 @@ components:
           type: string
           description: the external object identifier
           example: "b18c1010-4065-4a5a-891b-6162137c7929"
+        honorId:
+          type: string
+          nullable: true
+          readOnly: true
+          description: internal ID of the honor resource
+          example: "ba2a8aa8-ff02-4743-8eda-9f3502b550e8"
         status:
           type: string
           enum:
