@@ -721,12 +721,6 @@ components:
           type: string
           example: BIO-101
           nullable: true
-        description:
-          type: string
-          example: A survey of basic biology from the cellular level to plant and animal biology
-        notes:
-          type: string
-          example: Some course notes
     PatchableUser:
       type: object
       properties:
