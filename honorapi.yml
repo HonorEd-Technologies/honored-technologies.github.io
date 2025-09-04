@@ -667,6 +667,14 @@ components:
               $ref: '#/components/schemas/OneRosterResource'
             role:
               $ref: '#/components/schemas/Role'
+            beginDate:
+              type: string
+              format: date
+              nullable: true
+            endDate:
+              type: string
+              format: date
+              nullable: true
     IdRef:
       type: object
       properties:
